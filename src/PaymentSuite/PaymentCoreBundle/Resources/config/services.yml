@@ -9,6 +9,6 @@ services:
         class: PaymentSuite\PaymentCoreBundle\Services\PaymentLogger
         arguments:
             - "@logger"
-            - %paymentsuite.logger%
+            - "%paymentsuite.logger%"
         tags:
             - { name: monolog.logger, channel: 'paymentsuite' }
