@@ -1,6 +1,6 @@
 <?php
 
-namespace PaymentSuite\PaylandsBundle\Services\Api;
+namespace PaymentSuite\PaylandsBundle\ApiClient;
 
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\MessageFactoryDiscovery;

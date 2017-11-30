@@ -4,10 +4,10 @@ namespace PaymentSuite\PaylandsBundle\Tests\Services\Api;
 
 use Http\Message\UriFactory;
 use Http\Mock\Client;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClientFactory;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClientInterface;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiDiscoveryProxy;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiRequestFactory;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClientFactory;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClientInterface;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiDiscoveryProxy;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiRequestFactory;
 use Psr\Http\Message\UriInterface;
 
 /**

@@ -3,7 +3,7 @@
 namespace PaymentSuite\PaylandsBundle\DependencyInjection;
 
 use PaymentSuite\PaymentCoreBundle\DependencyInjection\Abstracts\AbstractPaymentSuiteConfiguration;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClientInterface;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClientInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 
 /**

@@ -2,8 +2,8 @@
 
 namespace PaymentSuite\PaylandsBundle\Services;
 
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClient;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClientInterface;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClient;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClientInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**

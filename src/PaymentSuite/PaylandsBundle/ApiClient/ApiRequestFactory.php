@@ -1,6 +1,6 @@
 <?php
 
-namespace PaymentSuite\PaylandsBundle\Services\Api;
+namespace PaymentSuite\PaylandsBundle\ApiClient;
 
 use Http\Message\RequestFactory;
 use Psr\Http\Message\RequestInterface;

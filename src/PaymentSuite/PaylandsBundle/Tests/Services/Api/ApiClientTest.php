@@ -1,15 +1,14 @@
 <?php
 
-
 namespace PaymentSuite\PaylandsBundle\Tests\Services\Api;
+
 use Http\Message\ResponseFactory;
 use Http\Mock\Client;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClient;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiRequestFactory;
-use Psr\Http\Message\ResponseInterface;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClient;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiRequestFactory;
 
 /**
- * Class ApiClientTest
+ * Class ApiClientTest.
  *
  * @author Santi Garcia <sgarcia@wearemarketing.com>, <sangarbe@gmail.com>
  */

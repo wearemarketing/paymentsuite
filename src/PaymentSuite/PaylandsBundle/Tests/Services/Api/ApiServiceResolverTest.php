@@ -2,7 +2,7 @@
 
 namespace PaymentSuite\PaylandsBundle\Tests\Services\Api;
 
-use PaymentSuite\PaylandsBundle\Services\Api\ApiServiceResolver;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiServiceResolver;
 use PaymentSuite\PaymentCoreBundle\Services\Interfaces\PaymentBridgeInterface;
 
 /**

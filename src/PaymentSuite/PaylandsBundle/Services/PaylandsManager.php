@@ -8,7 +8,7 @@ use PaymentSuite\PaymentCoreBundle\Exception\PaymentOrderNotFoundException;
 use PaymentSuite\PaymentCoreBundle\Services\Interfaces\PaymentBridgeInterface;
 use PaymentSuite\PaymentCoreBundle\Services\PaymentEventDispatcher;
 use PaymentSuite\PaylandsBundle\PaylandsMethod;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiClientInterface;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiClientInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**

@@ -3,9 +3,9 @@
 namespace PaymentSuite\PaylandsBundle\Tests\Services\Api;
 
 use Http\Message\RequestFactory;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiDiscoveryProxy;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiRequestFactory;
-use PaymentSuite\PaylandsBundle\Services\Api\ApiServiceResolver;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiDiscoveryProxy;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiRequestFactory;
+use PaymentSuite\PaylandsBundle\ApiClient\ApiServiceResolver;
 use Psr\Http\Message\RequestInterface;
 
 /**
