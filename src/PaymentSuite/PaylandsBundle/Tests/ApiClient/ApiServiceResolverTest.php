@@ -1,6 +1,6 @@
 <?php
 
-namespace PaymentSuite\PaylandsBundle\Tests\Services\Api;
+namespace PaymentSuite\PaylandsBundle\Tests\ApiCient;
 
 use PaymentSuite\PaylandsBundle\ApiClient\ApiServiceResolver;
 use PaymentSuite\PaymentCoreBundle\Services\Interfaces\PaymentBridgeInterface;

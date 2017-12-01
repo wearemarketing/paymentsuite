@@ -1,6 +1,6 @@
 <?php
 
-namespace PaymentSuite\PaylandsBundle\Tests\Services\Api;
+namespace PaymentSuite\PaylandsBundle\Tests\ApiCient;
 
 use Http\Message\ResponseFactory;
 use Http\Mock\Client;
