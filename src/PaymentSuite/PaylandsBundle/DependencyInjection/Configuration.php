@@ -42,6 +42,9 @@ class Configuration extends AbstractPaymentSuiteConfiguration
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('validation_service')
+                    ->defaultNull()
+                ->end()
                 ->enumNode('operative')
                     ->values([
                         ApiClientInterface::OPERATIVE_AUTHORIZATION,
