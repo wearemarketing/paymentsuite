@@ -33,4 +33,5 @@ services:
         public: false
         calls:
             - [setOperative, ['%paymentsuite.paylands.operative%']]
-            - [setTemplate, ['%paymentsuite.paylands.custom_template_uuid%']]
+            - [setTemplates, ['%paymentsuite.paylands.fallback_template_uuid%', '%paymentsuite.paylands.i18n_template_uuids%']]
+            - [setRequestStack, ['@?request_stack']]
