@@ -23,10 +23,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public $mandatory;
 
     /**
-     * {@inheritdoc}
-     */
-
-    /**
+     * @test
      * @dataProvider dataTestConfiguration
      *
      * @param mixed $inputConfig
@@ -89,6 +86,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'uri_factory' => null,
             ],
             'api_client' => Configuration::API_CLIENT_DEFAULT,
+            'validation_service' => null,
         ];
     }
 

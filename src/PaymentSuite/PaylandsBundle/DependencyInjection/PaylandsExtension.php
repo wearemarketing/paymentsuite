@@ -32,6 +32,7 @@ class PaylandsExtension extends AbstractPaymentSuiteExtension
                 'api_url' => trim($config['sandbox'] ? $config['url_sandbox'] : $config['url'], " \t\n\r\0\x0B/"),
                 'view_template' => $config['templates']['view'],
                 'scripts_template' => $config['templates']['scripts'],
+                'validation_service' => $config['validation_service'],
             ]
         );
 

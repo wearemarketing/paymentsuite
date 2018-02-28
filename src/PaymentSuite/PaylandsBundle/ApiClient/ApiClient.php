@@ -84,6 +84,16 @@ class ApiClient implements ApiClientInterface
     }
 
     /**
+     * Helper accessor to get current API card validation service identifier.
+     *
+     * @return string
+     */
+    public function getCurrentValidationService()
+    {
+        return $this->apiRequestFactory->getCurrentValidationService();
+    }
+
+    /**
      * Sets API's payments operative.
      *
      * @param string $operative
