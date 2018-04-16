@@ -88,7 +88,7 @@ class PaylandsViewRenderer
         $renderedScripts = $environment->render($this->scriptsTemplate, [
             'sandbox' => $this->apiClient->isModeSandboxEnabled(),
             'service' => $this->currencyServiceResolver->getValidationService(),
-            'template' => $this->apiClient->getTemplate(),
+            'template' => $this->apiClient->getTemplate($options['locale']),
             'additional' => $options['additional'],
         ]);
 
@@ -107,6 +107,7 @@ class PaylandsViewRenderer
             'only_tokenize_card' => false,
             'additional' => '',
             'template' => null,
+            'locale' => null,
         ]);
     }
 }
