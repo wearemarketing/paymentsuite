@@ -22,6 +22,7 @@ use PaymentSuite\PaymentCoreBundle\Services\PaymentEventDispatcher;
 use PaymentSuite\RedsysBundle\Exception\InvalidSignatureException;
 use PaymentSuite\RedsysBundle\Exception\ParameterNotReceivedException;
 use PaymentSuite\RedsysBundle\RedsysMethod;
+use PaymentSuite\RedsysBundle\RedsysSignature;
 
 /**
  * Redsys manager.
@@ -148,55 +149,33 @@ class RedsysManager
     {
         $this->checkResultParameters($parameters);
 
-        $redsysMethod = new RedsysMethod();
+        $decoded = RedsysEncrypter::decode($parameters['Ds_MerchantParameters']);
 
-        $dsSignature = $parameters['Ds_Signature'];
-        $dsResponse = $parameters['Ds_Response'];
-        $dsAmount = $parameters['Ds_Amount'];
-        $dsOrder = $parameters['Ds_Order'];
-        $dsMerchantCode = $parameters['Ds_MerchantCode'];
-        $dsCurrency = $parameters['Ds_Currency'];
-        $dsSecret = $this->secretKey;
-        $dsDate = $parameters['Ds_Date'];
-        $dsHour = $parameters['Ds_Hour'];
-        $dsSecurePayment = $parameters['Ds_SecurePayment'];
-        $dsCardCountry = $parameters['Ds_Card_Country'];
-        $dsAuthorisationCode = $parameters['Ds_AuthorisationCode'];
-        $dsConsumerLanguage = $parameters['Ds_ConsumerLanguage'];
-        $dsCardType = array_key_exists('Ds_Card_Type', $parameters)
-            ? $parameters['Ds_Card_Type']
-            : '';
+        $signature = RedsysSignature::createFromResult($decoded, $this->secretKey);
 
-        if ($dsSignature != $this
-                ->expectedSignature(
-                    $dsAmount,
-                    $dsOrder,
-                    $dsMerchantCode,
-                    $dsCurrency,
-                    $dsResponse,
-                    $dsSecret
-                )
-        ) {
+        if ($parameters['Ds_Signature'] != $signature->denormalized()) {
             throw new InvalidSignatureException();
         }
 
-        /**
+        $redsysMethod = new RedsysMethod();
+
+        /*
          * Adding transaction information to PaymentMethod.
          *
          * This information is only available in PaymentOrderSuccess event
          */
         $redsysMethod
-            ->setDsResponse($dsResponse)
-            ->setDsAuthorisationCode($dsAuthorisationCode)
-            ->setDsCardCountry($dsCardCountry)
-            ->setDsCardType($dsCardType)
-            ->setDsConsumerLanguage($dsConsumerLanguage)
-            ->setDsDate($dsDate)
-            ->setDsHour($dsHour)
-            ->setDsSecurePayment($dsSecurePayment)
-            ->setDsOrder($dsOrder);
+            ->setDsMerchantParameters($parameters['Ds_MerchantParameters'])
+            ->setDsSignatureVersion($parameters['Ds_SignatureVersion'])
+            ->setDsSignature($parameters['Ds_Signature']);
 
-        /**
+        /*
+         * Here PaymentBridge shouldn't have the order loaded, so we find it fromm parameters
+         */
+        $this->paymentBridge
+            ->findOrder($this->parseOrderId($decoded['Ds_Order']));
+
+        /*
          * Payment paid done.
          *
          * Paid process has ended ( No matters result )
@@ -208,13 +187,13 @@ class RedsysManager
                 $redsysMethod
             );
 
-        /**
+        /*
          * when a transaction is successful, $Ds_Response has a
          * value between 0 and 99.
          */
-        if (!$this->transactionSuccessful($dsResponse)) {
+        if (!$this->transactionSuccessful($decoded['Ds_Response'])) {
 
-            /**
+            /*
              * Payment paid failed.
              *
              * Paid process has ended failed
@@ -229,7 +208,7 @@ class RedsysManager
             throw new PaymentException();
         }
 
-        /**
+        /*
          * Payment paid successfully.
          *
          * Paid process has ended successfully
@@ -262,36 +241,6 @@ class RedsysManager
     }
 
     /**
-     * Returns the expected signature.
-     *
-     * @param string $amount       Amount
-     * @param string $order        Order
-     * @param string $merchantCode Merchant Code
-     * @param string $currency     Currency
-     * @param string $response     Response code
-     * @param string $secret       Secret
-     *
-     * @return string Signature
-     */
-    private function expectedSignature(
-        $amount,
-        $order,
-        $merchantCode,
-        $currency,
-        $response,
-        $secret
-    ) {
-        return strtoupper(sha1(implode('', [
-            $amount,
-            $order,
-            $merchantCode,
-            $currency,
-            $response,
-            $secret,
-        ])));
-    }
-
-    /**
      * Checks that all the required parameters are received.
      *
      * @param array $parameters Parameters
@@ -301,26 +250,22 @@ class RedsysManager
     private function checkResultParameters(array $parameters)
     {
         $elementsMissing = array_diff([
-            'Ds_Date',
-            'Ds_Hour',
-            'Ds_Amount',
-            'Ds_Currency',
-            'Ds_Order',
-            'Ds_MerchantCode',
-            'Ds_Terminal',
+            'Ds_MerchantParameters',
             'Ds_Signature',
-            'Ds_Response',
-            'Ds_TransactionType',
-            'Ds_SecurePayment',
-            'Ds_Card_Country',
-            'Ds_AuthorisationCode',
-            'Ds_ConsumerLanguage',
-        ], $parameters);
+            'Ds_SignatureVersion',
+        ], array_keys($parameters));
 
         if (!empty($elementsMissing)) {
             throw new ParameterNotReceivedException(
                 implode(', ', $elementsMissing)
             );
         }
+    }
+
+    private function parseOrderId($dsOrder)
+    {
+        $chunks = explode('T', $dsOrder);
+
+        return intval($chunks[0]);
     }
 }

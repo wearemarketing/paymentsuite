@@ -21,6 +21,7 @@ services:
             - '%paymentsuite.redsys.merchant_code%'
             - '%paymentsuite.redsys.secret_key%'
             - '%paymentsuite.redsys.url%'
+            - '%paymentsuite.redsys.terminal%'
 
     paymentsuite.redsys.url_factory:
         class: PaymentSuite\RedsysBundle\Services\RedsysUrlFactory
