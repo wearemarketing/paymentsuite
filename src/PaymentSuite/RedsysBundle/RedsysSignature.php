@@ -4,15 +4,15 @@ namespace PaymentSuite\RedsysBundle;
 
 use PaymentSuite\RedsysBundle\Services\RedsysEncrypter;
 
-class RedsysSignature
+final class RedsysSignature
 {
     private $signature;
 
     private function __construct(array $parameters, string $secretKey, string $orderIndex)
     {
-        $key = RedsysEncrypter::encrypt($parameters[$orderIndex], $secretKey);
+        $key = self::encrypt($parameters[$orderIndex], $secretKey);
 
-        $this->signature = RedsysEncrypter::hash($this->encodeMerchantParameters($parameters), $key);
+        $this->signature = self::hash(RedsysEncrypter::encode($parameters), $key);
     }
 
     public static function create($parameters, $secretKey)
@@ -25,13 +25,33 @@ class RedsysSignature
         return new self($parameters, $secretKey, 'Ds_Order');
     }
 
-    public function normalized()
+    public function match(string $signature){
+
+        return $this->signature == RedsysEncrypter::normalize($signature);
+    }
+
+    public function __toString()
     {
         return $this->signature;
     }
 
-    public function denormalized()
+    private function encrypt($message, $key)
     {
-        return RedsysEncrypter::denormalize($this->signature);
+        $key = base64_decode($key);
+
+        $bytes = array(0, 0, 0, 0, 0, 0, 0, 0);
+        $iv = implode(array_map('chr', $bytes));
+
+        if (strlen($message) % 8) {
+            $message = str_pad($message,
+                strlen($message) + 8 - strlen($message) % 8, "\0");
+        }
+
+        return openssl_encrypt($message, 'DES-EDE3-CBC', $key, OPENSSL_NO_PADDING|OPENSSL_RAW_DATA, $iv);
+    }
+
+    private function hash($data, $key)
+    {
+        return base64_encode(hash_hmac('sha256', $data, $key, true));
     }
 }

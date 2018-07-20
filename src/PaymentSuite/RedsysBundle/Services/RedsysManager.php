@@ -23,6 +23,7 @@ use PaymentSuite\RedsysBundle\Exception\InvalidSignatureException;
 use PaymentSuite\RedsysBundle\Exception\ParameterNotReceivedException;
 use PaymentSuite\RedsysBundle\RedsysMethod;
 use PaymentSuite\RedsysBundle\RedsysSignature;
+use function Sodium\crypto_box_publickey_from_secretkey;
 
 /**
  * Redsys manager.
@@ -147,33 +148,15 @@ class RedsysManager
      */
     public function processResult(array $parameters)
     {
-        $this->checkResultParameters($parameters);
-
-        $decoded = RedsysEncrypter::decode($parameters['Ds_MerchantParameters']);
-
-        $signature = RedsysSignature::createFromResult($decoded, $this->secretKey);
-
-        if ($parameters['Ds_Signature'] != $signature->denormalized()) {
-            throw new InvalidSignatureException();
-        }
-
-        $redsysMethod = new RedsysMethod();
-
-        /*
-         * Adding transaction information to PaymentMethod.
-         *
-         * This information is only available in PaymentOrderSuccess event
-         */
-        $redsysMethod
-            ->setDsMerchantParameters($parameters['Ds_MerchantParameters'])
-            ->setDsSignatureVersion($parameters['Ds_SignatureVersion'])
-            ->setDsSignature($parameters['Ds_Signature']);
+        $redsysMethod = $this
+            ->redsysMethodFactory
+            ->createFromResult($parameters);
 
         /*
          * Here PaymentBridge shouldn't have the order loaded, so we find it fromm parameters
          */
         $this->paymentBridge
-            ->findOrder($this->parseOrderId($decoded['Ds_Order']));
+            ->findOrder($this->parseOrderId($redsysMethod->getDsOrder()));
 
         /*
          * Payment paid done.
@@ -191,7 +174,7 @@ class RedsysManager
          * when a transaction is successful, $Ds_Response has a
          * value between 0 and 99.
          */
-        if (!$this->transactionSuccessful($decoded['Ds_Response'])) {
+        if (!$redsysMethod->isTransactionSuccessful()) {
 
             /*
              * Payment paid failed.
@@ -221,45 +204,6 @@ class RedsysManager
             );
 
         return $this;
-    }
-
-    /**
-     * Returns true if the transaction was successful.
-     *
-     * @param string $dsResponse Response code
-     *
-     * @return bool
-     */
-    private function transactionSuccessful($dsResponse)
-    {
-        /**
-         * When a transaction is successful, $Ds_Response has a value
-         * between 0 and 99.
-         */
-
-        return intval($dsResponse) >= 0 && intval($dsResponse) <= 99;
-    }
-
-    /**
-     * Checks that all the required parameters are received.
-     *
-     * @param array $parameters Parameters
-     *
-     * @throws ParameterNotReceivedException Parameters missing
-     */
-    private function checkResultParameters(array $parameters)
-    {
-        $elementsMissing = array_diff([
-            'Ds_MerchantParameters',
-            'Ds_Signature',
-            'Ds_SignatureVersion',
-        ], array_keys($parameters));
-
-        if (!empty($elementsMissing)) {
-            throw new ParameterNotReceivedException(
-                implode(', ', $elementsMissing)
-            );
-        }
     }
 
     private function parseOrderId($dsOrder)

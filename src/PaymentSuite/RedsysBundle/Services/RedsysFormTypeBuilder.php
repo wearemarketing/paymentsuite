@@ -107,6 +107,7 @@ class RedsysFormTypeBuilder
      * Builds form given return, success and fail urls.
      *
      * @return FormView
+     *
      * @throws CurrencyNotSupportedException
      */
     public function buildForm()
@@ -131,7 +132,7 @@ class RedsysFormTypeBuilder
                 'data' => $merchantParameters,
             ))
             ->add('Ds_Signature', 'hidden', array(
-                'data' => $signature->normalized(),
+                'data' => (string) $signature,
             ));
 
         return $formBuilder

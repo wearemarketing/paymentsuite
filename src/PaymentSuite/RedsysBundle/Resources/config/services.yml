@@ -30,3 +30,5 @@ services:
 
     paymentsuite.redsys.method_factory:
         class: PaymentSuite\RedsysBundle\Services\RedsysMethodFactory
+        arguments:
+            - '%paymentsuite.redsys.secret_key%'

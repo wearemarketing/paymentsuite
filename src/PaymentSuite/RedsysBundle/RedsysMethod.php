@@ -117,6 +117,13 @@ final class RedsysMethod implements PaymentMethodInterface
         return $this;
     }
 
+    public function isTransactionSuccessful()
+    {
+        $dsResponse = $this->getDsResponse();
+
+        return $dsResponse >= 0 && $dsResponse <= 99;
+    }
+
     /**
      * Returns the method's type name.
      *
@@ -125,5 +132,19 @@ final class RedsysMethod implements PaymentMethodInterface
     public function getPaymentName()
     {
         return 'redsys';
+    }
+
+    private function getDsResponse()
+    {
+        $decoded = $this->getDsMerchantParameters(true);
+
+        return intval($decoded['Ds_Response']);
+    }
+
+    public function getDsOrder()
+    {
+        $decoded = $this->getDsMerchantParameters(true);
+
+        return $decoded['Ds_Order'];
     }
 }
